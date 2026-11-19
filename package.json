@@ -1,0 +1,23 @@
+{
+  "name": "aun-qa-v4-system",
+  "version": "1.0.0",
+  "description": "ระบบจัดเก็บข้อมูลและหลักฐานอ้างอิงสำหรับรายงานประเมินตนเองตามเกณฑ์ AUN-QA Version 4.0",
+  "scripts": {
+    "start": "cd server && npm start",
+    "build": "cd client && npm install && npm run build && cd ../server && npm install",
+    "server": "cd server && npm start",
+    "server:dev": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "build:client": "cd client && npm run build"
+  },
+  "keywords": [
+    "aun-qa",
+    "sar",
+    "react",
+    "nodejs",
+    "mongodb",
+    "tailwind"
+  ],
+  "author": "Computer Technology Department",
+  "license": "ISC"
+}

@@ -1,0 +1,62 @@
+# ==============================================================================
+# ไฟล์: docker-compose.yml
+# หน้าที่: รันระบบ AUN-QA ทั้งหมด (MongoDB + Backend + Frontend/Nginx) ในคลิกเดียว
+# คำสั่งรัน: docker compose up -d
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # 1. ฐานข้อมูล MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: aunqa-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: aunqa_db
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - aunqa-network
+
+  # 2. เซิร์ฟเวอร์ Node.js Express Backend
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: aunqa-backend
+    restart: always
+    environment:
+      - PORT=5001
+      - MONGO_URI=mongodb://mongodb:27017/aunqa_db
+      - JWT_SECRET=aunqa_jwt_secret_key_production_2026_cpt
+      - NODE_ENV=production
+    volumes:
+      - ./server/uploads:/app/uploads
+    depends_on:
+      - mongodb
+    networks:
+      - aunqa-network
+
+  # 3. เซิร์ฟเวอร์ Nginx ให้บริการ Frontend React และ Reverse Proxy
+  frontend:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.frontend
+    container_name: aunqa-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - aunqa-network
+
+networks:
+  aunqa-network:
+    driver: bridge
+
+volumes:
+  mongo-data:

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- 
+  ====================================================================================
+  index.html (ไฟล์โครงสร้าง HTML หลักของแอปพลิเคชันฝั่ง Frontend)
+  ====================================================================================
+  - กำหนดภาษาเป็นภาษาไทย (lang="th")
+  - นำเข้าฟอนต์ Google Fonts ภาษาไทย: Prompt (สำหรับหัวข้อและปุ่ม) และ Sarabun (สำหรับเนื้อหา)
+  - กำหนดจุด Mount ของ React Application ที่ <div id="root"></div>
+  - โหลดสคริปต์เริ่มต้นจาก /src/main.jsx
+  ====================================================================================
+-->
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ระบบจัดเก็บข้อมูลและหลักฐานอ้างอิง AUN-QA Version 4.0</title>
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-100 text-slate-900 antialiased font-['Prompt',sans-serif]">
+    <!-- จุดที่ React DOM เรนเดอร์คอมโพเนนต์หลักลงในหน้าเว็บ -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
