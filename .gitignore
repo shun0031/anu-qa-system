@@ -3,9 +3,6 @@ node_modules/
 client/node_modules/
 server/node_modules/
 
-# Production Build
-client/dist/
-
 # Environment Variables
 .env
 server/.env
