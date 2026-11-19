@@ -4,7 +4,7 @@
   "description": "ระบบจัดเก็บข้อมูลและหลักฐานอ้างอิงสำหรับรายงานประเมินตนเองตามเกณฑ์ AUN-QA Version 4.0",
   "scripts": {
     "start": "cd server && npm start",
-    "build": "cd client && npm install && npm run build && cd ../server && npm install",
+    "build": "cd client && npm install --include=dev && npm run build && cd ../server && npm install",
     "server": "cd server && npm start",
     "server:dev": "cd server && npm run dev",
     "client": "cd client && npm run dev",
