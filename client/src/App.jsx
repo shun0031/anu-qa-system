@@ -46,6 +46,7 @@ import SystemLogs from './pages/admin/SystemLogs';
 const ProtectedLayout = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
   const { theme } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   // 1. ระหว่างกำลังโหลดตรวจสอบข้อมูลผู้ใช้จาก Token ใน LocalStorage
   if (loading) {
@@ -79,10 +80,16 @@ const ProtectedLayout = ({ children, allowedRoles }) => {
   // 4. แสดงผล Layout ปกติ (Navbar + Sidebar + เนื้อหาหลัก)
   return (
     <div className={`min-h-screen ${theme.bg} flex flex-col transition-colors duration-200`}>
-      <Navbar />
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        <Sidebar />
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto max-w-full">
+      <Navbar
+        onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)}
+        isMobileMenuOpen={mobileMenuOpen}
+      />
+      <div className="flex-1 flex max-w-7xl w-full mx-auto relative">
+        <Sidebar
+          mobileOpen={mobileMenuOpen}
+          onCloseMobile={() => setMobileMenuOpen(false)}
+        />
+        <main className="flex-1 p-3 sm:p-5 lg:p-8 overflow-y-auto max-w-full min-w-0">
           {children}
         </main>
       </div>

@@ -35,31 +35,31 @@ const Login = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme.bg} flex flex-col justify-center py-10 sm:px-6 lg:px-8 transition-colors duration-200`}>
+    <div className={`min-h-screen ${theme.bg} flex flex-col justify-center py-6 px-4 sm:py-10 sm:px-6 lg:px-8 transition-colors duration-200`}>
       {/* Top right theme switcher */}
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+      <div className="absolute top-3 right-3 sm:top-6 sm:right-6">
         <ThemeSelector />
       </div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="flex justify-center mb-5">
-          <div className="w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center p-2 transition-transform duration-300 hover:scale-105">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mt-6 sm:mt-0">
+        <div className="flex justify-center mb-4 sm:mb-5">
+          <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 flex items-center justify-center p-2 transition-transform duration-300 hover:scale-105">
             <img src={logoImg} alt="โลโก้ระบบ" className="w-full h-full object-contain drop-shadow-xl" />
           </div>
         </div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
           ระบบจัดเก็บข้อมูลและหลักฐานอ้างอิง
         </h1>
         <div className="mt-1 inline-block bg-blue-600 text-white font-bold text-xs px-3 py-1 rounded-full shadow-xs">
           ตามเกณฑ์ AUN-QA Version 4.0
         </div>
-        <p className="mt-2 text-xs font-semibold text-slate-600">
+        <p className="mt-2 text-[11px] sm:text-xs font-semibold text-slate-600">
           สาขาเทคโนโลยีคอมพิวเตอร์ • คณะวิทยาศาสตร์และเทคโนโลยี
         </p>
       </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-5 sm:px-8 shadow-xl rounded-3xl border-2 border-slate-200">
+      <div className="mt-5 sm:mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-6 px-4 sm:py-8 sm:px-8 shadow-xl rounded-2xl sm:rounded-3xl border-2 border-slate-200">
           {error && (
             <div className="mb-5 flex items-center gap-2 p-3.5 text-sm font-bold text-red-900 bg-red-100 border-2 border-red-400 rounded-xl">
               <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-700" />
