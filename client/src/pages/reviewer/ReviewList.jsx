@@ -32,11 +32,13 @@ import {
   FileDown
 } from 'lucide-react';
 import StatusBadge from '../../components/StatusBadge'; // คอมโพเนนต์ป้ายสถานะ
+import { downloadElementAsPDF } from '../../utils/pdfExport';
 
 const ReviewList = () => {
   const { user } = useAuth(); // ข้อมูลกรรมการ AUN-QA ปัจจุบัน
   const [records, setRecords] = useState([]); // รายการข้อมูล SAR ทั้งหมดของปีการศึกษา
   const [loading, setLoading] = useState(true);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all'); // ตัวกรองสถานะ
   const [search, setSearch] = useState(''); // คำค้นหา
 
@@ -152,25 +154,28 @@ const ReviewList = () => {
             <option value="draft">ฉบับร่าง (Draft)</option>
           </select>
 
-          {/* ปุ่มส่งออกรายการเป็น PDF */}
+          {/* ปุ่มดาวน์โหลดรายการตรวจสอบเป็นไฟล์ PDF ตรงลงเครื่อง */}
           <button
-            onClick={() => {
-              const prev = document.title;
-              document.title = 'รายงานรายการผลการตรวจประเมิน_AUN-QA_2567';
-              window.print();
-              setTimeout(() => { document.title = prev; }, 1000);
+            onClick={async () => {
+              setDownloadingPDF(true);
+              try {
+                await downloadElementAsPDF('review-list-content', 'รายงานรายการตรวจประเมิน_AUN-QA_2567');
+              } finally {
+                setDownloadingPDF(false);
+              }
             }}
-            className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-xs flex items-center gap-1.5 transition hover:scale-102"
-            title="ส่งออกรายการตรวจสอบเป็นไฟล์ PDF"
+            disabled={downloadingPDF}
+            className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 text-white rounded-xl text-xs font-black shadow-xs flex items-center gap-1.5 transition hover:scale-102"
+            title="คลิกเพื่อดาวน์โหลดไฟล์ PDF ลงเครื่องคอม/มือถือทันที"
           >
             <FileDown className="w-4 h-4 stroke-[2.5]" />
-            <span>ส่งออกเป็น PDF</span>
+            <span>{downloadingPDF ? 'กำลังสร้าง PDF...' : 'ดาวน์โหลดเป็น PDF'}</span>
           </button>
         </div>
       </div>
 
       {/* ==================== ส่วนที่ 2: ตารางรายการที่ต้องตรวจสอบ ==================== */}
-      <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
+      <div id="review-list-content" className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden p-2 sm:p-0">
         <div className="p-5 bg-slate-50 border-b-2 border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <UserCheck className="w-5 h-5 text-purple-600 stroke-[2.5]" />

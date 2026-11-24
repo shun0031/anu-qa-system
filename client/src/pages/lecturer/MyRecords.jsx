@@ -38,9 +38,11 @@ import {
   FileDown
 } from 'lucide-react';
 import StatusBadge from '../../components/StatusBadge'; // คอมโพเนนต์ป้ายสถานะ
+import { downloadElementAsPDF } from '../../utils/pdfExport';
 
 const MyRecords = () => {
   const { user } = useAuth(); // ข้อมูลอาจารย์ปัจจุบัน
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
 
   // State จัดการตัวเลือกหลักสูตรและปีการศึกษา
   const [courses, setCourses] = useState([]);
@@ -309,25 +311,28 @@ const MyRecords = () => {
             ))}
           </select>
 
-          {/* ปุ่มส่งออกรายงาน SAR เป็น PDF */}
+          {/* ปุ่มดาวน์โหลดรายงาน SAR เป็นไฟล์ PDF ตรงลงเครื่อง */}
           <button
-            onClick={() => {
-              const prev = document.title;
-              document.title = `รายงานSAR_AUN-QA_V4_${selectedYear}_เทคโนโลยีคอมพิวเตอร์`;
-              window.print();
-              setTimeout(() => { document.title = prev; }, 1000);
+            onClick={async () => {
+              setDownloadingPDF(true);
+              try {
+                await downloadElementAsPDF('my-records-content', `รายงานSAR_AUN-QA_V4_${selectedYear}_เทคโนโลยีคอมพิวเตอร์`);
+              } finally {
+                setDownloadingPDF(false);
+              }
             }}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-xs flex items-center gap-1.5 transition hover:scale-102"
-            title="ส่งออกรายงานประเมินตนเอง (SAR) เป็นไฟล์ PDF"
+            disabled={downloadingPDF}
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 text-white rounded-xl text-xs font-black shadow-xs flex items-center gap-1.5 transition hover:scale-102"
+            title="คลิกเพื่อดาวน์โหลดรายงานประเมินตนเอง (SAR) เป็นไฟล์ PDF ลงเครื่องทันที"
           >
             <FileDown className="w-4 h-4 stroke-[2.5]" />
-            <span>ส่งออก SAR เป็น PDF</span>
+            <span>{downloadingPDF ? 'กำลังสร้าง PDF...' : 'ดาวน์โหลด SAR เป็น PDF'}</span>
           </button>
         </div>
       </div>
 
       {/* ==================== ส่วนที่ 2: ตารางรายการเกณฑ์ AUN-QA ทั้งหมด ==================== */}
-      <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
+      <div id="my-records-content" className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden p-2 sm:p-0">
         <div className="p-5 bg-slate-50 border-b-2 border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-blue-600 stroke-[2.5]" />

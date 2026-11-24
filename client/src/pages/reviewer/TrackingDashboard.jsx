@@ -42,6 +42,7 @@ import {
 } from 'lucide-react';
 import StatusBadge from '../../components/StatusBadge';
 import logoImg from '../../assets/logo.png';
+import { downloadElementAsPDF } from '../../utils/pdfExport';
 
 // รายชื่อหมวดเกณฑ์มาตรฐาน AUN-QA Version 4.0 ทั้ง 8 หมวด
 const AUN_QA_CATEGORIES = [
@@ -84,6 +85,7 @@ const TrackingDashboard = () => {
 
   // ควบคุมเมนู Dropdown ส่งออก PDF
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
 
   // โหลดรายการหลักสูตรและปีการศึกษาเริ่มต้น
   useEffect(() => {
@@ -194,7 +196,34 @@ const TrackingDashboard = () => {
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
   }, []);
 
-  // ฟังก์ชันสั่งพิมพ์และส่งออกรายงานเป็น PDF พร้อมกำหนดชื่อไฟล์อัตโนมัติ
+  // ฟังก์ชันดาวน์โหลดไฟล์ PDF ตรงลงเครื่องคอมพิวเตอร์หรือโทรศัพท์มือถือทันที
+  const handleDirectDownloadPDF = async (mode = 'all') => {
+    setShowExportMenu(false);
+    setDownloadingPDF(true);
+
+    const modeName =
+      mode === 'summary' ? 'บทสรุปผู้บริหาร_8หมวด' : mode === 'table' ? 'ตารางรายเกณฑ์' : 'รายงานฉบับสมบูรณ์';
+    const cleanCourse = currentCourse.course_name ? currentCourse.course_name.replace(/[^\u0E00-\u0E7Fa-zA-Z0-9]/g, '_') : 'หลักสูตร';
+    const filename = `รายงาน_AUN-QA_V4_${selectedYear}_${modeName}_${cleanCourse}`;
+
+    // ปรับแท็บให้แสดงเฉพาะส่วนที่เลือกชั่วคราวขณะสร้าง PDF
+    const prevTab = activeTab;
+    if (mode !== 'all') {
+      setActiveTab(mode);
+    }
+
+    // หน่วงเวลาเล็กน้อยเพื่อให้ DOM เรนเดอร์เสร็จสมบูรณ์
+    await new Promise(r => setTimeout(r, 250));
+
+    try {
+      await downloadElementAsPDF('aun-qa-report-content', filename);
+    } finally {
+      setActiveTab(prevTab);
+      setDownloadingPDF(false);
+    }
+  };
+
+  // ฟังก์ชันสั่งพิมพ์และส่งออกรายงานเป็น PDF ผ่าน Browser Print
   const handleExportPDF = (mode = 'all') => {
     setShowExportMenu(false);
     const prevTitle = document.title;
@@ -301,21 +330,27 @@ const TrackingDashboard = () => {
             </select>
           </div>
 
-          {/* ปุ่มส่งออกรายงานเป็น PDF พร้อมตัวเลือกรูปแบบ */}
+          {/* ปุ่มดาวน์โหลดไฟล์ PDF ตรงลงเครื่องคอม/มือถือ พร้อมตัวเลือก */}
           <div className="relative">
             <div className="inline-flex rounded-xl shadow-md overflow-hidden">
               <button
-                onClick={() => handleExportPDF('all')}
-                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-extrabold flex items-center gap-2 transition"
-                title="ส่งออกรายงานฉบับสมบูรณ์เป็นไฟล์ PDF"
+                onClick={() => handleDirectDownloadPDF('all')}
+                disabled={downloadingPDF}
+                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 text-white text-sm font-extrabold flex items-center gap-2 transition"
+                title="คลิกเพื่อดาวน์โหลดไฟล์ PDF ลงเครื่องคอมหรือมือถือทันที"
               >
-                <FileDown className="w-4 h-4 stroke-[2.5]" />
-                <span>ส่งออกเป็น PDF</span>
+                {downloadingPDF ? (
+                  <Clock className="w-4 h-4 animate-spin" />
+                ) : (
+                  <FileDown className="w-4 h-4 stroke-[2.5]" />
+                )}
+                <span>{downloadingPDF ? 'กำลังสร้างไฟล์ PDF...' : 'ดาวน์โหลดไฟล์ PDF'}</span>
               </button>
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
-                className="px-2.5 py-2.5 bg-rose-700 hover:bg-rose-800 text-white border-l border-rose-500 transition"
-                title="เลือกรูปแบบรายงาน PDF"
+                disabled={downloadingPDF}
+                className="px-2.5 py-2.5 bg-rose-700 hover:bg-rose-800 disabled:bg-rose-500 text-white border-l border-rose-500 transition"
+                title="เลือกรูปแบบรายงาน PDF ที่ต้องการดาวน์โหลด"
               >
                 <ChevronDown className="w-4 h-4 stroke-[2.5]" />
               </button>
@@ -325,35 +360,35 @@ const TrackingDashboard = () => {
             {showExportMenu && (
               <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50">
                 <div className="px-3.5 py-1.5 text-xs font-extrabold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                  เลือกรูปแบบไฟล์ PDF ที่ต้องการ
+                  เลือกรูปแบบไฟล์ PDF สำหรับดาวน์โหลด
                 </div>
                 <button
-                  onClick={() => handleExportPDF('all')}
+                  onClick={() => handleDirectDownloadPDF('all')}
                   className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-800 hover:bg-rose-50 hover:text-rose-700 flex items-center gap-3 transition"
                 >
                   <FileDown className="w-4 h-4 text-rose-600 flex-shrink-0" />
                   <div>
-                    <div className="font-extrabold">รายงานฉบับสมบูรณ์ (ครบทุกส่วน)</div>
+                    <div className="font-extrabold">ดาวน์โหลดรายงานฉบับสมบูรณ์ (PDF)</div>
                     <div className="text-xs text-slate-500 font-normal">บทสรุป 8 หมวด + ตารางเกณฑ์ละเอียดครบทุกข้อ</div>
                   </div>
                 </button>
                 <button
-                  onClick={() => handleExportPDF('summary')}
+                  onClick={() => handleDirectDownloadPDF('summary')}
                   className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-800 hover:bg-purple-50 hover:text-purple-700 flex items-center gap-3 transition"
                 >
                   <BarChart3 className="w-4 h-4 text-purple-600 flex-shrink-0" />
                   <div>
-                    <div className="font-extrabold">เฉพาะบทสรุปผู้บริหาร 8 หมวด</div>
+                    <div className="font-extrabold">ดาวน์โหลดเฉพาะบทสรุป 8 หมวด (PDF)</div>
                     <div className="text-xs text-slate-500 font-normal">ตารางสรุป 8 หมวด + การวิเคราะห์ความพร้อม</div>
                   </div>
                 </button>
                 <button
-                  onClick={() => handleExportPDF('table')}
+                  onClick={() => handleDirectDownloadPDF('table')}
                   className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-800 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-3 transition"
                 >
                   <FileText className="w-4 h-4 text-blue-600 flex-shrink-0" />
                   <div>
-                    <div className="font-extrabold">เฉพาะตารางแจกแจงรายเกณฑ์</div>
+                    <div className="font-extrabold">ดาวน์โหลดเฉพาะตารางรายเกณฑ์ (PDF)</div>
                     <div className="text-xs text-slate-500 font-normal">สถานะและจำนวนหลักฐานย่อยทั้งหมด</div>
                   </div>
                 </button>
@@ -365,7 +400,7 @@ const TrackingDashboard = () => {
           <button
             onClick={() => handleExportPDF('all')}
             className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold shadow-sm flex items-center gap-2 transition hover:scale-102"
-            title="พิมพ์เอกสารรายงาน"
+            title="พิมพ์รายงานออกเครื่องพิมพ์หรือบันทึกผ่านเบราว์เซอร์"
           >
             <Printer className="w-4 h-4 stroke-[2.5]" />
             พิมพ์รายงาน
