@@ -107,7 +107,9 @@ const saveRecord = async (req, res) => {
       }
     } else {
       // กรณีมีบันทึกเดิมอยู่แล้ว: หากได้รับการยืนยันแล้ว เฉพาะกรรมการหรือแอดมินเท่านั้นที่แก้ไขได้
-      if (record.status === 'confirmed' && req.userRole !== 'ผู้ดูแลระบบ' && req.userRole !== 'ผู้รับผิดชอบ AUN-QA') {
+      const roles = req.userRoles || [req.userRole];
+      const canEditConfirmed = roles.some(r => r === 'ผู้ดูแลระบบ' || r === 'ผู้รับผิดชอบ AUN-QA');
+      if (record.status === 'confirmed' && !canEditConfirmed) {
         return res.status(400).json({ message: 'รายการนี้ได้รับการยืนยันผลแล้ว ไม่สามารถแก้ไขได้' });
       }
 

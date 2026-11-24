@@ -27,11 +27,17 @@ const getUsers = async (req, res) => {
         { email: { $regex: search, $options: 'i' } }
       ];
     }
-    if (role) query.role_id = role;
+    if (role) {
+      query.$or = [
+        { role_id: role },
+        { role_ids: role }
+      ];
+    }
     if (status) query.status = status;
 
     const users = await User.find(query)
       .populate('role_id')
+      .populate('role_ids')
       .populate('department_id')
       .select('-password_hash')
       .sort({ created_date: -1 });
@@ -42,13 +48,21 @@ const getUsers = async (req, res) => {
   }
 };
 
-// 2. สร้างบัญชีผู้ใช้งานใหม่ (Admin Create User)
+// 2. สร้างบัญชีผู้ใช้งานใหม่ (Admin Create User - รองรับ 1 บัญชีหลายสิทธิ์)
 const createUser = async (req, res) => {
   try {
-    const { username, password, full_name, email, phone, address, line_id, role_id, department_id, status } = req.body;
+    const { username, password, full_name, email, phone, address, line_id, role_id, role_ids, department_id, status } = req.body;
 
-    if (!username || !password || !full_name || !email || !role_id) {
-      return res.status(400).json({ message: 'กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน' });
+    // รวบรวมรายการสิทธิ์ที่เลือก
+    let assignedRoles = [];
+    if (Array.isArray(role_ids) && role_ids.length > 0) {
+      assignedRoles = role_ids;
+    } else if (role_id) {
+      assignedRoles = [role_id];
+    }
+
+    if (!username || !password || !full_name || !email || assignedRoles.length === 0) {
+      return res.status(400).json({ message: 'กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน และกำหนดอย่างน้อย 1 สิทธิ์' });
     }
 
     // ตรวจสอบชื่อผู้ใช้และอีเมลซ้ำ
@@ -72,15 +86,17 @@ const createUser = async (req, res) => {
       phone: phone || '',
       address: address || '',
       line_id: line_id || '',
-      role_id,
+      role_id: assignedRoles[0],
+      role_ids: assignedRoles,
       department_id: department_id || null,
       status: status || 'active'
     });
 
-    await logAction(req.user._id, 'CREATE_USER', 'users', newUser._id, `เพิ่มผู้ใช้งานใหม่: ${newUser.username}`, req);
+    await logAction(req.user._id, 'CREATE_USER', 'users', newUser._id, `เพิ่มผู้ใช้งานใหม่: ${newUser.username} (${assignedRoles.length} สิทธิ์)`, req);
 
     const populatedUser = await User.findById(newUser._id)
       .populate('role_id')
+      .populate('role_ids')
       .populate('department_id')
       .select('-password_hash');
 
@@ -90,11 +106,11 @@ const createUser = async (req, res) => {
   }
 };
 
-// 3. แก้ไขข้อมูลผู้ใช้งาน (Admin Update User)
+// 3. แก้ไขข้อมูลผู้ใช้งาน (Admin Update User - รองรับ 1 บัญชีหลายสิทธิ์)
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { full_name, email, phone, address, line_id, role_id, department_id, status } = req.body;
+    const { full_name, email, phone, address, line_id, role_id, role_ids, department_id, status } = req.body;
 
     const user = await User.findById(id);
     if (!user) {
@@ -106,7 +122,16 @@ const updateUser = async (req, res) => {
     if (phone !== undefined) user.phone = phone;
     if (address !== undefined) user.address = address;
     if (line_id !== undefined) user.line_id = line_id;
-    if (role_id) user.role_id = role_id;
+
+    // อัปเดตสิทธิ์ (role_ids & role_id)
+    if (Array.isArray(role_ids) && role_ids.length > 0) {
+      user.role_ids = role_ids;
+      user.role_id = role_ids[0];
+    } else if (role_id) {
+      user.role_id = role_id;
+      user.role_ids = [role_id];
+    }
+
     if (department_id !== undefined) user.department_id = department_id || null;
     if (status) user.status = status;
 
@@ -115,6 +140,7 @@ const updateUser = async (req, res) => {
 
     const updated = await User.findById(id)
       .populate('role_id')
+      .populate('role_ids')
       .populate('department_id')
       .select('-password_hash');
 

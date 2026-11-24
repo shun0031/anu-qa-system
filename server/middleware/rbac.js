@@ -13,17 +13,23 @@
 const allowRoles = (...allowedRoles) => {
   return (req, res, next) => {
     // 1. ตรวจสอบว่าผู้ใช้ผ่านการตรวจสอบ JWT มาแล้วหรือไม่
-    if (!req.user || !req.userRole) {
+    if (!req.user) {
       return res.status(401).json({ message: 'ยังไม่ได้เข้าสู่ระบบ' });
     }
 
-    // 2. ตรวจสอบว่าบทบาทปัจจุบันตรงกับหนึ่งในรายชื่อที่อนุญาตหรือไม่ (Case-insensitive)
-    const userRole = req.userRole.toLowerCase();
-    const hasRole = allowedRoles.some(r => r.toLowerCase() === userRole);
+    // 2. ดึงบทบาททั้งหมดของผู้ใช้ (รองรับ 1 บัญชีหลายสิทธิ์)
+    const userRoles = (req.userRoles && req.userRoles.length > 0)
+      ? req.userRoles
+      : (req.userRole ? [req.userRole] : []);
+
+    // 3. ตรวจสอบว่ามีบทบาทใดบทบาทหนึ่ง ตรงกับรายชื่อที่ได้รับอนุญาตหรือไม่ (Case-insensitive)
+    const hasRole = allowedRoles.some(allowed =>
+      userRoles.some(r => r && r.toLowerCase() === allowed.toLowerCase())
+    );
 
     if (!hasRole) {
       return res.status(403).json({
-        message: `คุณไม่มีสิทธิ์ในการเข้าถึงส่วนนี้ (สิทธิ์ปัจจุบันของคุณ: ${req.userRole})`
+        message: `คุณไม่มีสิทธิ์ในการเข้าถึงส่วนนี้ (สิทธิ์ปัจจุบันของคุณ: ${userRoles.join(', ') || 'ไม่มี'})`
       });
     }
 

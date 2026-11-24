@@ -17,7 +17,11 @@ const getLogs = async (req, res) => {
     if (action) query.action = action;
 
     const logs = await SystemLog.find(query)
-      .populate('user_id', 'full_name username role_id')
+      .populate({
+        path: 'user_id',
+        select: 'full_name username role_id role_ids',
+        populate: [{ path: 'role_id' }, { path: 'role_ids' }]
+      })
       .sort({ timestamp: -1 })
       .limit(parseInt(limit));
 

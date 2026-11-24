@@ -74,10 +74,44 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify({ ...user, ...updatedUser }));
   };
 
-  // ตัวช่วยตรวจสอบบทบาท (Role Checking Helpers)
-  const isAdmin = user?.role === 'ผู้ดูแลระบบ';
-  const isLecturer = user?.role === 'อาจารย์ในสาขาเทคโนโลยีคอมพิวเตอร์';
-  const isReviewer = user?.role === 'ผู้รับผิดชอบ AUN-QA';
+  // รายชื่อบทบาททั้งหมดที่บัญชีนี้ได้รับ (รองรับ 1 บัญชีหลายสิทธิ์)
+  const roles = user?.roles?.length ? user.roles : (user?.role ? [user.role] : []);
+
+  // State สำหรับบทบาทที่กำลังเลือกใช้งานอยู่ขณะนี้ (Active Role)
+  const [activeRole, setActiveRole] = useState(() => {
+    return localStorage.getItem('activeRole') || null;
+  });
+
+  // ซิงค์ Active Role ให้ตรงกับสิทธิ์ที่มี
+  useEffect(() => {
+    if (roles.length > 0) {
+      if (!activeRole || !roles.includes(activeRole)) {
+        setActiveRole(roles[0]);
+        localStorage.setItem('activeRole', roles[0]);
+      }
+    } else {
+      setActiveRole(null);
+      localStorage.removeItem('activeRole');
+    }
+  }, [user]);
+
+  // ฟังก์ชันสลับบทบาทปัจจุบัน (Role Switcher)
+  const switchActiveRole = (newRole) => {
+    if (roles.includes(newRole)) {
+      setActiveRole(newRole);
+      localStorage.setItem('activeRole', newRole);
+    }
+  };
+
+  // ตัวช่วยตรวจสอบบทบาท: ตรวจสอบว่ามีสิทธิ์นั้นๆ หรือไม่ (ไม่ว่าจะเลือก Role ไหนอยู่ก็ตาม)
+  const hasRole = (roleName) => {
+    if (!roleName) return false;
+    return roles.some(r => r.toLowerCase() === roleName.toLowerCase());
+  };
+
+  const isAdmin = hasRole('ผู้ดูแลระบบ');
+  const isLecturer = hasRole('อาจารย์ในสาขาเทคโนโลยีคอมพิวเตอร์');
+  const isReviewer = hasRole('ผู้รับผิดชอบ AUN-QA');
 
   return (
     <AuthContext.Provider
@@ -88,6 +122,10 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateUser,
+        roles,
+        activeRole,
+        switchActiveRole,
+        hasRole,
         isAdmin,
         isLecturer,
         isReviewer

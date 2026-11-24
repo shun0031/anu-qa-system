@@ -15,6 +15,43 @@ const User = require('../models/User');
 const { JWT_SECRET } = require('../middleware/auth');
 const { logAction } = require('../middleware/logger');
 
+// ฟังก์ชันสกัดข้อมูลบทบาทและสิทธิ์ทั้งหมดของผู้ใช้ (รองรับ 1 บัญชีมีหลายสิทธิ์)
+const extractRolesAndPermissions = (user) => {
+  const roleObjects = [];
+  if (user.role_ids && user.role_ids.length > 0) {
+    user.role_ids.forEach(r => {
+      if (r && r._id && !roleObjects.some(existing => existing._id?.toString() === r._id?.toString())) {
+        roleObjects.push(r);
+      }
+    });
+  }
+  if (user.role_id && !roleObjects.some(existing => existing._id?.toString() === user.role_id?._id?.toString())) {
+    roleObjects.push(user.role_id);
+  }
+
+  const roleNames = roleObjects.map(r => r.role_name).filter(Boolean);
+  const primaryRole = roleNames[0] || user.role_id?.role_name || '';
+
+  const permissionsSet = new Set();
+  roleObjects.forEach(r => {
+    if (r.permission_ids && Array.isArray(r.permission_ids)) {
+      r.permission_ids.forEach(p => {
+        if (p && p.permission_name) {
+          permissionsSet.add(p.permission_name);
+        }
+      });
+    }
+  });
+
+  return {
+    roles: roleNames,
+    role: primaryRole,
+    role_ids: roleObjects.map(r => r._id),
+    role_id: roleObjects[0]?._id || user.role_id?._id,
+    permissions: Array.from(permissionsSet)
+  };
+};
+
 // -----------------------------------------------------------------------------
 // 1. เข้าสู่ระบบ (Login)
 // -----------------------------------------------------------------------------
@@ -25,10 +62,14 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน' });
     }
 
-    // ค้นหาผู้ใช้จาก username พร้อมดึงข้อมูล Role และ Department
+    // ค้นหาผู้ใช้จาก username พร้อมดึงข้อมูล Roles (ทั้ง role_ids และ role_id) และ Department
     const user = await User.findOne({ username: username.toLowerCase().trim() })
       .populate({
         path: 'role_id',
+        populate: { path: 'permission_ids' }
+      })
+      .populate({
+        path: 'role_ids',
         populate: { path: 'permission_ids' }
       })
       .populate('department_id');
@@ -48,23 +89,27 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
     }
 
+    // สกัดข้อมูลสิทธิ์และบทบาททั้งหมด
+    const roleInfo = extractRolesAndPermissions(user);
+
     // บันทึกวันเวลาที่เข้าใช้งานล่าสุด
     user.last_login = new Date();
     await user.save();
 
-    // สร้าง JWT Token อายุ 7 วัน
+    // สร้าง JWT Token อายุ 7 วัน พร้อมบรรจุรายชื่อบทบาททั้งหมด
     const token = jwt.sign(
       {
         id: user._id,
         username: user.username,
-        role: user.role_id?.role_name
+        role: roleInfo.role,
+        roles: roleInfo.roles
       },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
     // บันทึก Audit Log การเข้าสู่ระบบ
-    await logAction(user._id, 'LOGIN', 'users', user._id, `ผู้ใช้ ${user.username} เข้าสู่ระบบสำเร็จ`, req);
+    await logAction(user._id, 'LOGIN', 'users', user._id, `ผู้ใช้ ${user.username} เข้าสู่ระบบสำเร็จ (สิทธิ์: ${roleInfo.roles.join(', ')})`, req);
 
     res.json({
       message: 'เข้าสู่ระบบสำเร็จ',
@@ -77,9 +122,11 @@ const login = async (req, res) => {
         phone: user.phone,
         address: user.address,
         line_id: user.line_id,
-        role: user.role_id?.role_name,
-        role_id: user.role_id?._id,
-        permissions: user.role_id?.permission_ids?.map(p => p.permission_name) || [],
+        role: roleInfo.role,
+        roles: roleInfo.roles,
+        role_id: roleInfo.role_id,
+        role_ids: roleInfo.role_ids,
+        permissions: roleInfo.permissions,
         department: user.department_id?.department_name,
         department_id: user.department_id?._id,
         status: user.status,
@@ -102,12 +149,18 @@ const getMe = async (req, res) => {
         path: 'role_id',
         populate: { path: 'permission_ids' }
       })
+      .populate({
+        path: 'role_ids',
+        populate: { path: 'permission_ids' }
+      })
       .populate('department_id')
       .select('-password_hash');
 
     if (!user) {
       return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน' });
     }
+
+    const roleInfo = extractRolesAndPermissions(user);
 
     res.json({
       user: {
@@ -118,9 +171,11 @@ const getMe = async (req, res) => {
         phone: user.phone,
         address: user.address,
         line_id: user.line_id,
-        role: user.role_id?.role_name,
-        role_id: user.role_id?._id,
-        permissions: user.role_id?.permission_ids?.map(p => p.permission_name) || [],
+        role: roleInfo.role,
+        roles: roleInfo.roles,
+        role_id: roleInfo.role_id,
+        role_ids: roleInfo.role_ids,
+        permissions: roleInfo.permissions,
         department: user.department_id?.department_name,
         department_id: user.department_id?._id,
         status: user.status,

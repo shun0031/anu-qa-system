@@ -57,11 +57,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
-  // อ้างอิงบทบาทผู้ใช้ (Admin, Lecturer, Reviewer)
+  // รายการบทบาททั้งหมดของผู้ใช้งาน (รองรับ 1 บัญชีมีหลายสิทธิ์)
+  role_ids: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role'
+  }],
+  // อ้างอิงบทบาทหลักของผู้ใช้ (Admin, Lecturer, Reviewer) - เพื่อความเข้ากันได้กับโค้ดเดิม
   role_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Role',
-    required: true
+    required: false
   },
   // อ้างอิงสังกัดสาขาวิชา (เช่น สาขาเทคโนโลยีคอมพิวเตอร์)
   department_id: {
@@ -83,6 +88,16 @@ const userSchema = new mongoose.Schema({
 }, {
   // บันทึกวันที่สร้างบัญชี (created_date) และวันที่แก้ไขข้อมูลล่าสุด (updated_date) อัตโนมัติ
   timestamps: { createdAt: 'created_date', updatedAt: 'updated_date' }
+});
+
+// ซิงค์ระหว่าง role_ids และ role_id อัตโนมัติ เพื่อรองรับทั้ง 1 บัญชีหลายสิทธิ์และระบบเดิม
+userSchema.pre('save', function (next) {
+  if (this.role_ids && this.role_ids.length > 0 && !this.role_id) {
+    this.role_id = this.role_ids[0];
+  } else if (this.role_id && (!this.role_ids || this.role_ids.length === 0)) {
+    this.role_ids = [this.role_id];
+  }
+  next();
 });
 
 module.exports = mongoose.model('User', userSchema);

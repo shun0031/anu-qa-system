@@ -62,13 +62,15 @@ const ProtectedLayout = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // 3. หากล็อกอินแล้วแต่ Role ปัจจุบันไม่ได้รับอนุญาตในหน้านี้ (RBAC Check)
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  // 3. หากล็อกอินแล้วแต่ไม่มีสิทธิ์ในหน้านี้ (RBAC Check - รองรับ 1 บัญชีหลายสิทธิ์)
+  const userRoles = user?.roles?.length ? user.roles : (user?.role ? [user.role] : []);
+  const hasAccess = !allowedRoles || allowedRoles.some(r => userRoles.includes(r));
+  if (!hasAccess) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4 text-center">
         <h1 className="text-xl font-bold text-red-600 mb-2">ไม่มีสิทธิ์เข้าถึงหน้านี้</h1>
         <p className="text-sm text-slate-500 mb-4">
-          บทบาทปัจจุบันของคุณ ({user.role}) ไม่ได้รับอนุญาตให้เข้าถึงเนื้อหานี้
+          บทบาทที่คุณได้รับ ({userRoles.join(', ') || 'ไม่มีบทบาท'}) ไม่ได้รับอนุญาตให้เข้าถึงเนื้อหานี้
         </p>
         <a href="/dashboard" className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold">
           กลับสู่หน้าหลัก

@@ -131,9 +131,19 @@ const Profile = () => {
             </div>
             <h2 className="text-lg font-black text-slate-900">{user?.full_name}</h2>
             <p className="text-xs font-bold text-slate-500 font-mono">@{user?.username}</p>
-            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-blue-100 text-blue-900 border border-blue-300">
-              <Shield className="w-3.5 h-3.5 text-blue-600" />
-              {user?.role}
+            <div className="mt-3 flex flex-wrap justify-center gap-1.5">
+              {(user?.roles?.length ? user.roles : (user?.role ? [user.role] : [])).map((r, i) => {
+                let badgeClass = "bg-blue-100 text-blue-900 border-blue-300";
+                if (r === 'ผู้ดูแลระบบ') badgeClass = "bg-emerald-100 text-emerald-900 border-emerald-300";
+                else if (r === 'ผู้รับผิดชอบ AUN-QA') badgeClass = "bg-purple-100 text-purple-900 border-purple-300";
+
+                return (
+                  <div key={i} className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border ${badgeClass} shadow-2xs`}>
+                    <Shield className="w-3.5 h-3.5" />
+                    {r}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

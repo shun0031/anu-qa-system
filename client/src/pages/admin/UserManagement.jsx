@@ -41,7 +41,7 @@ const UserManagement = () => {
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // State ฟอร์มข้อมูลผู้ใช้งาน
+  // State ฟอร์มข้อมูลผู้ใช้งาน (รองรับ 1 บัญชีหลายสิทธิ์ role_ids)
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -51,6 +51,7 @@ const UserManagement = () => {
     line_id: '',
     address: '',
     role_id: '',
+    role_ids: [],
     department_id: '',
     status: 'active'
   });
@@ -67,10 +68,11 @@ const UserManagement = () => {
       setUsers(uRes.data);
       setRoles(metaRes.data.roles);
       setDepartments(metaRes.data.departments);
-      if (metaRes.data.roles.length > 0 && !form.role_id) {
+      if (metaRes.data.roles.length > 0 && (!form.role_ids || form.role_ids.length === 0)) {
         setForm(prev => ({
           ...prev,
           role_id: metaRes.data.roles[0]._id,
+          role_ids: [metaRes.data.roles[0]._id],
           department_id: metaRes.data.departments[0]?._id || ''
         }));
       }
@@ -85,6 +87,28 @@ const UserManagement = () => {
     fetchUsersAndMeta();
   }, []);
 
+  // ฟังก์ชันสลับการเลือกบทบาท (Checkbox Toggle)
+  const handleToggleRole = (roleId) => {
+    setForm(prev => {
+      const currentList = Array.isArray(prev.role_ids) ? prev.role_ids : [];
+      const exists = currentList.includes(roleId);
+      let nextRoleIds;
+      if (exists) {
+        if (currentList.length === 1) {
+          return prev; // บังคับให้ต้องมีอย่างน้อย 1 สิทธิ์
+        }
+        nextRoleIds = currentList.filter(id => id !== roleId);
+      } else {
+        nextRoleIds = [...currentList, roleId];
+      }
+      return {
+        ...prev,
+        role_ids: nextRoleIds,
+        role_id: nextRoleIds[0] || ''
+      };
+    });
+  };
+
   // เปิด Modal เพิ่มผู้ใช้ใหม่
   const handleOpenCreate = () => {
     setSelectedUser(null);
@@ -97,15 +121,29 @@ const UserManagement = () => {
       line_id: '',
       address: '',
       role_id: roles[0]?._id || '',
+      role_ids: roles[0] ? [roles[0]._id] : [],
       department_id: departments[0]?._id || '',
       status: 'active'
     });
     setIsModalOpen(true);
   };
 
-  // เปิด Modal แก้ไขข้อมูลผู้ใช้ที่มีอยู่แล้ว
+  // เปิด Modal แก้ไขข้อมูลผู้ใช้ที่มีอยู่แล้ว (ดึงสิทธิ์ทั้งหมดที่มี)
   const handleOpenEdit = (user) => {
     setSelectedUser(user);
+
+    let userRoleIds = [];
+    if (user.role_ids && Array.isArray(user.role_ids)) {
+      userRoleIds = user.role_ids.map(r => r._id || r);
+    }
+    const primaryId = user.role_id?._id || user.role_id;
+    if (primaryId && !userRoleIds.includes(primaryId)) {
+      userRoleIds.push(primaryId);
+    }
+    if (userRoleIds.length === 0 && roles.length > 0) {
+      userRoleIds = [roles[0]._id];
+    }
+
     setForm({
       username: user.username,
       password: '',
@@ -114,7 +152,8 @@ const UserManagement = () => {
       phone: user.phone || '',
       line_id: user.line_id || '',
       address: user.address || '',
-      role_id: user.role_id?._id || user.role_id,
+      role_id: userRoleIds[0] || '',
+      role_ids: userRoleIds,
       department_id: user.department_id?._id || user.department_id || '',
       status: user.status
     });
@@ -261,10 +300,30 @@ const UserManagement = () => {
                       <div className="text-xs font-bold text-slate-500 font-mono">@{u.username}</div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-black bg-purple-100 text-purple-900 border border-purple-300">
-                        <Shield className="w-3.5 h-3.5" />
-                        {u.role_id?.role_name || '-'}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {(() => {
+                          const userRoles = (u.role_ids && u.role_ids.length > 0)
+                            ? u.role_ids
+                            : (u.role_id ? [u.role_id] : []);
+                          if (userRoles.length === 0) return <span className="text-slate-400 text-xs">-</span>;
+                          return userRoles.map((r, idx) => {
+                            const rName = r?.role_name || r;
+                            let badgeClass = "bg-blue-100 text-blue-900 border-blue-300";
+                            if (rName === 'ผู้ดูแลระบบ') badgeClass = "bg-emerald-100 text-emerald-900 border-emerald-300";
+                            else if (rName === 'ผู้รับผิดชอบ AUN-QA') badgeClass = "bg-purple-100 text-purple-900 border-purple-300";
+
+                            return (
+                              <span
+                                key={idx}
+                                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-black border ${badgeClass} shadow-2xs`}
+                              >
+                                <Shield className="w-3 h-3 flex-shrink-0" />
+                                {rName}
+                              </span>
+                            );
+                          });
+                        })()}
+                      </div>
                     </td>
                     <td className="py-3.5 px-4 text-xs font-bold text-slate-700">
                       {u.department_id?.department_name || '-'}
@@ -395,37 +454,54 @@ const UserManagement = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-black text-slate-800 mb-1">
-                    บทบาท (Role) <span className="text-red-600">*</span>
-                  </label>
-                  <select
-                    value={form.role_id}
-                    onChange={(e) => setForm({ ...form, role_id: e.target.value })}
-                    className="w-full px-3 py-2 border-2 border-slate-300 rounded-xl text-xs font-bold bg-white"
-                  >
-                    {roles.map(r => (
-                      <option key={r._id} value={r._id}>{r.role_name}</option>
-                    ))}
-                  </select>
-                </div>
+              <div>
+                <label className="block text-xs font-black text-slate-800 mb-1.5 flex items-center justify-between">
+                  <span>กำหนดสิทธิ์ใช้งาน (เลือกได้หลายสิทธิ์สำหรับ 1 บัญชี) <span className="text-red-600">*</span></span>
+                  <span className="text-[11px] text-blue-600 font-bold">เลือกแล้ว {form.role_ids?.length || 0} สิทธิ์</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-2.5 bg-slate-50 border-2 border-slate-300 rounded-2xl">
+                  {roles.map(r => {
+                    const isChecked = form.role_ids?.includes(r._id);
+                    let activeCard = "border-blue-500 bg-blue-50 text-blue-950";
+                    if (r.role_name === 'ผู้ดูแลระบบ') activeCard = "border-emerald-500 bg-emerald-50 text-emerald-950";
+                    else if (r.role_name === 'ผู้รับผิดชอบ AUN-QA') activeCard = "border-purple-500 bg-purple-50 text-purple-950";
 
-                <div>
-                  <label className="block text-xs font-black text-slate-800 mb-1">
-                    สาขาวิชา
-                  </label>
-                  <select
-                    value={form.department_id}
-                    onChange={(e) => setForm({ ...form, department_id: e.target.value })}
-                    className="w-full px-3 py-2 border-2 border-slate-300 rounded-xl text-xs font-bold bg-white"
-                  >
-                    <option value="">-- ไม่ระบุ --</option>
-                    {departments.map(d => (
-                      <option key={d._id} value={d._id}>{d.department_name}</option>
-                    ))}
-                  </select>
+                    return (
+                      <label
+                        key={r._id}
+                        className={`flex items-start gap-2 p-2.5 rounded-xl border-2 cursor-pointer transition select-none ${
+                          isChecked ? `${activeCard} font-black shadow-xs` : 'border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => handleToggleRole(r._id)}
+                          className="mt-0.5 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                        />
+                        <div className="text-xs leading-tight">
+                          <div>{r.role_name}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-slate-800 mb-1">
+                  สาขาวิชา
+                </label>
+                <select
+                  value={form.department_id}
+                  onChange={(e) => setForm({ ...form, department_id: e.target.value })}
+                  className="w-full px-3 py-2 border-2 border-slate-300 rounded-xl text-xs font-bold bg-white"
+                >
+                  <option value="">-- ไม่ระบุ --</option>
+                  {departments.map(d => (
+                    <option key={d._id} value={d._id}>{d.department_name}</option>
+                  ))}
+                </select>
               </div>
 
               <div>

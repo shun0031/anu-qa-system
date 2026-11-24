@@ -11,38 +11,48 @@
  * ==============================================================================
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { User, LogOut, Shield, Award, Menu, X } from 'lucide-react';
+import { User, LogOut, Shield, Award, Menu, X, ChevronDown, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ThemeSelector from './ThemeSelector';
 import logoImg from '../assets/logo.png';
 
 const Navbar = ({ onToggleMobileMenu, isMobileMenuOpen }) => {
-  const { user, logout, isAdmin, isReviewer, isLecturer } = useAuth();
+  const { user, logout, roles, activeRole, switchActiveRole } = useAuth();
   const { theme } = useTheme();
+  const [roleMenuOpen, setRoleMenuOpen] = useState(false);
 
-  // ป้ายแสดงบทบาทของผู้ใช้ปัจจุบัน
-  const getRoleBadge = () => {
-    if (isAdmin) {
-      return (
-        <span className="bg-emerald-600 text-white text-xs px-2.5 py-0.5 rounded-md font-bold shadow-xs">
-          ผู้ดูแลระบบ (Admin)
-        </span>
-      );
+  // สไตล์และชื่อย่อของแต่ละบทบาท
+  const getRoleInfo = (roleName) => {
+    if (roleName === 'ผู้ดูแลระบบ') {
+      return { label: 'ผู้ดูแลระบบ (Admin)', short: 'Admin', color: 'bg-emerald-600 text-white' };
     }
-    if (isReviewer) {
-      return (
-        <span className="bg-purple-600 text-white text-xs px-2.5 py-0.5 rounded-md font-bold shadow-xs">
-          ผู้รับผิดชอบ AUN-QA
-        </span>
-      );
+    if (roleName === 'ผู้รับผิดชอบ AUN-QA') {
+      return { label: 'ผู้รับผิดชอบ AUN-QA', short: 'กรรมการ QA', color: 'bg-purple-600 text-white' };
     }
+    return { label: 'อาจารย์ผู้รับผิดชอบ', short: 'อาจารย์', color: 'bg-blue-600 text-white' };
+  };
+
+  // ป้ายแสดงบทบาทของผู้ใช้ (รองรับ 1 บัญชีมีหลายสิทธิ์)
+  const renderRoleBadges = () => {
+    const list = roles && roles.length > 0 ? roles : (user?.role ? [user.role] : []);
     return (
-      <span className="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-md font-bold shadow-xs">
-        อาจารย์ผู้รับผิดชอบ
-      </span>
+      <div className="flex flex-wrap items-center gap-1 mt-0.5">
+        {list.map((r, i) => {
+          const info = getRoleInfo(r);
+          return (
+            <span
+              key={i}
+              className={`${info.color} text-[10px] px-2 py-0.5 rounded-md font-bold shadow-xs whitespace-nowrap`}
+              title={info.label}
+            >
+              {list.length > 1 ? info.short : info.label}
+            </span>
+          );
+        })}
+      </div>
     );
   };
 
@@ -108,9 +118,52 @@ const Navbar = ({ onToggleMobileMenu, isMobileMenuOpen }) => {
                   <div className="text-xs font-bold text-slate-900 leading-tight">
                     {user.full_name}
                   </div>
-                  <div className="mt-0.5">{getRoleBadge()}</div>
+                  {renderRoleBadges()}
                 </div>
               </Link>
+
+              {/* ปุ่มสลับบทบาท (แสดงเฉพาะเมื่อบัญชีมีมากกว่า 1 สิทธิ์) */}
+              {roles && roles.length > 1 && (
+                <div className="relative hidden sm:block">
+                  <button
+                    onClick={() => setRoleMenuOpen(prev => !prev)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition shadow-xs"
+                    title="คลิกเพื่อสลับมุมมองบทบาทการทำงาน"
+                  >
+                    <span>สลับบทบาท ({roles.length})</span>
+                    <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" />
+                  </button>
+                  {roleMenuOpen && (
+                    <div className="absolute right-0 mt-1.5 w-60 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-2 text-xs">
+                      <div className="font-black text-slate-700 px-2.5 py-1.5 border-b border-slate-100 text-[11px] uppercase tracking-wide">
+                        สิทธิ์ที่คุณมีในบัญชีนี้ ({roles.length} สิทธิ์)
+                      </div>
+                      <div className="mt-1 space-y-1">
+                        {roles.map((r, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              switchActiveRole(r);
+                              setRoleMenuOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left font-bold transition ${
+                              activeRole === r ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50 text-slate-700'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 truncate">
+                              <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                                r === 'ผู้ดูแลระบบ' ? 'bg-emerald-500' : r === 'ผู้รับผิดชอบ AUN-QA' ? 'bg-purple-500' : 'bg-blue-500'
+                              }`} />
+                              <span className="truncate">{r}</span>
+                            </div>
+                            {activeRole === r && <Check className="w-4 h-4 text-blue-600 stroke-[3] flex-shrink-0" />}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* ปุ่มออกจากระบบ */}
               <button

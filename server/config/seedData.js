@@ -27,10 +27,25 @@ const AunqaRecord = require('../models/AunqaRecord');
 
 const seedInitialData = async () => {
   try {
+    // ซิงค์บทบาท role_ids ให้กับผู้ใช้งานเดิมที่ยังไม่มี role_ids (Auto-Migration สำหรับ 1 บัญชีหลายสิทธิ์)
+    const usersNeedingSync = await User.find({
+      $or: [
+        { role_ids: { $exists: false } },
+        { role_ids: { $size: 0 } },
+        { role_ids: null }
+      ]
+    });
+    for (const u of usersNeedingSync) {
+      if (u.role_id) {
+        u.role_ids = [u.role_id];
+        await u.save();
+      }
+    }
+
     // ตรวจสอบว่าในฐานข้อมูลมีข้อมูลผู้ใช้อยู่แล้วหรือไม่ หากมีแล้วให้ข้ามการสร้างซ้ำ
     const userCount = await User.countDocuments();
     if (userCount > 0) {
-      console.log('Database already has data. Skipping initial seeding.');
+      console.log('Database already has data. Initial seeding skipped & roles auto-synced.');
       return;
     }
 
@@ -113,6 +128,7 @@ const seedInitialData = async () => {
       phone: '081-111-2222',
       line_id: 'admin_aunqa',
       role_id: adminRole._id,
+      role_ids: [adminRole._id],
       department_id: dept._id,
       status: 'active'
     });
@@ -125,6 +141,7 @@ const seedInitialData = async () => {
       phone: '089-333-4444',
       line_id: 'somchai_tech',
       role_id: lecturerRole._id,
+      role_ids: [lecturerRole._id],
       department_id: dept._id,
       status: 'active'
     });
@@ -137,6 +154,7 @@ const seedInitialData = async () => {
       phone: '086-555-6666',
       line_id: 'wipada_qa',
       role_id: reviewerRole._id,
+      role_ids: [reviewerRole._id],
       department_id: dept._id,
       status: 'active'
     });
