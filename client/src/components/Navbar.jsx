@@ -48,7 +48,7 @@ const Navbar = ({ onToggleMobileMenu, isMobileMenuOpen }) => {
 
   return (
     <header className={`${theme.navbar} sticky top-0 z-30 shadow-xs transition-colors duration-200`}>
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-16 sm:min-h-20 py-2 flex items-center justify-between gap-2">
+      <div className="w-full px-4 sm:px-6 lg:px-8 min-h-16 sm:min-h-20 py-2 flex items-center justify-between gap-2">
         {/* ฝั่งซ้าย: ปุ่มเปิดเมนูมือถือ + โลโก้และชื่อระบบ */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* ปุ่ม Hamburger Menu สำหรับจอมือถือ (แสดงเฉพาะหน้าจอขนาดเล็ก) */}
