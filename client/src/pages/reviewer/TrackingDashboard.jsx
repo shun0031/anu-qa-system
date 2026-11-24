@@ -35,7 +35,10 @@ import {
   ShieldCheck,
   Building2,
   Users,
-  GraduationCap
+  GraduationCap,
+  FileDown,
+  ChevronDown,
+  Download
 } from 'lucide-react';
 import StatusBadge from '../../components/StatusBadge';
 import logoImg from '../../assets/logo.png';
@@ -78,6 +81,9 @@ const TrackingDashboard = () => {
 
   // แท็บมุมมอง: 'all' = ดูทั้งหมด, 'summary' = เฉพาะบทสรุปรายงาน, 'table' = เฉพาะตารางรายเกณฑ์
   const [activeTab, setActiveTab] = useState('all');
+
+  // ควบคุมเมนู Dropdown ส่งออก PDF
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   // โหลดรายการหลักสูตรและปีการศึกษาเริ่มต้น
   useEffect(() => {
@@ -188,9 +194,33 @@ const TrackingDashboard = () => {
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
   }, []);
 
-  // ฟังก์ชันสั่งพิมพ์รายงานผ่านเบราว์เซอร์
+  // ฟังก์ชันสั่งพิมพ์และส่งออกรายงานเป็น PDF พร้อมกำหนดชื่อไฟล์อัตโนมัติ
+  const handleExportPDF = (mode = 'all') => {
+    setShowExportMenu(false);
+    const prevTitle = document.title;
+    const modeName =
+      mode === 'summary' ? 'บทสรุปผู้บริหาร_8หมวด' : mode === 'table' ? 'ตารางรายเกณฑ์' : 'รายงานฉบับสมบูรณ์';
+    const cleanCourse = currentCourse.course_name ? currentCourse.course_name.replace(/[^\u0E00-\u0E7Fa-zA-Z0-9]/g, '_') : 'หลักสูตร';
+    
+    // กำหนดชื่อไฟล์เริ่มต้นเมื่อผู้ใช้กดบันทึกเป็น PDF ในเบราว์เซอร์
+    document.title = `รายงาน_AUN-QA_V4_${selectedYear}_${modeName}_${cleanCourse}`;
+
+    const prevTab = activeTab;
+    if (mode !== 'all') {
+      setActiveTab(mode);
+    }
+
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => {
+        document.title = prevTitle;
+        setActiveTab(prevTab);
+      }, 1000);
+    }, 150);
+  };
+
   const handlePrint = () => {
-    window.print();
+    handleExportPDF('all');
   };
 
   // ระดับความพร้อมของหลักสูตร
@@ -271,13 +301,74 @@ const TrackingDashboard = () => {
             </select>
           </div>
 
+          {/* ปุ่มส่งออกรายงานเป็น PDF พร้อมตัวเลือกรูปแบบ */}
+          <div className="relative">
+            <div className="inline-flex rounded-xl shadow-md overflow-hidden">
+              <button
+                onClick={() => handleExportPDF('all')}
+                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-extrabold flex items-center gap-2 transition"
+                title="ส่งออกรายงานฉบับสมบูรณ์เป็นไฟล์ PDF"
+              >
+                <FileDown className="w-4 h-4 stroke-[2.5]" />
+                <span>ส่งออกเป็น PDF</span>
+              </button>
+              <button
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                className="px-2.5 py-2.5 bg-rose-700 hover:bg-rose-800 text-white border-l border-rose-500 transition"
+                title="เลือกรูปแบบรายงาน PDF"
+              >
+                <ChevronDown className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </div>
+
+            {/* เมนู Dropdown เลือกรูปแบบรายงาน PDF */}
+            {showExportMenu && (
+              <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50">
+                <div className="px-3.5 py-1.5 text-xs font-extrabold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                  เลือกรูปแบบไฟล์ PDF ที่ต้องการ
+                </div>
+                <button
+                  onClick={() => handleExportPDF('all')}
+                  className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-800 hover:bg-rose-50 hover:text-rose-700 flex items-center gap-3 transition"
+                >
+                  <FileDown className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                  <div>
+                    <div className="font-extrabold">รายงานฉบับสมบูรณ์ (ครบทุกส่วน)</div>
+                    <div className="text-xs text-slate-500 font-normal">บทสรุป 8 หมวด + ตารางเกณฑ์ละเอียดครบทุกข้อ</div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => handleExportPDF('summary')}
+                  className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-800 hover:bg-purple-50 hover:text-purple-700 flex items-center gap-3 transition"
+                >
+                  <BarChart3 className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                  <div>
+                    <div className="font-extrabold">เฉพาะบทสรุปผู้บริหาร 8 หมวด</div>
+                    <div className="text-xs text-slate-500 font-normal">ตารางสรุป 8 หมวด + การวิเคราะห์ความพร้อม</div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => handleExportPDF('table')}
+                  className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-800 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-3 transition"
+                >
+                  <FileText className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <div>
+                    <div className="font-extrabold">เฉพาะตารางแจกแจงรายเกณฑ์</div>
+                    <div className="text-xs text-slate-500 font-normal">สถานะและจำนวนหลักฐานย่อยทั้งหมด</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* ปุ่มพิมพ์รายงาน */}
           <button
-            onClick={handlePrint}
+            onClick={() => handleExportPDF('all')}
             className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold shadow-sm flex items-center gap-2 transition hover:scale-102"
+            title="พิมพ์เอกสารรายงาน"
           >
             <Printer className="w-4 h-4 stroke-[2.5]" />
-            พิมพ์รายงานสรุปผล
+            พิมพ์รายงาน
           </button>
         </div>
       </div>

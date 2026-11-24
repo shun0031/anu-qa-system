@@ -34,7 +34,8 @@ import {
   ExternalLink,
   Download,
   Info,
-  History
+  History,
+  FileDown
 } from 'lucide-react';
 import StatusBadge from '../../components/StatusBadge'; // คอมโพเนนต์ป้ายสถานะ
 
@@ -307,6 +308,21 @@ const MyRecords = () => {
               <option key={c._id} value={c._id}>{c.course_name}</option>
             ))}
           </select>
+
+          {/* ปุ่มส่งออกรายงาน SAR เป็น PDF */}
+          <button
+            onClick={() => {
+              const prev = document.title;
+              document.title = `รายงานSAR_AUN-QA_V4_${selectedYear}_เทคโนโลยีคอมพิวเตอร์`;
+              window.print();
+              setTimeout(() => { document.title = prev; }, 1000);
+            }}
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-xs flex items-center gap-1.5 transition hover:scale-102"
+            title="ส่งออกรายงานประเมินตนเอง (SAR) เป็นไฟล์ PDF"
+          >
+            <FileDown className="w-4 h-4 stroke-[2.5]" />
+            <span>ส่งออก SAR เป็น PDF</span>
+          </button>
         </div>
       </div>
 

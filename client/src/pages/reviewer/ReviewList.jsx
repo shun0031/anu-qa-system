@@ -28,7 +28,8 @@ import {
   ExternalLink,
   MessageSquare,
   Search,
-  Filter
+  Filter,
+  FileDown
 } from 'lucide-react';
 import StatusBadge from '../../components/StatusBadge'; // คอมโพเนนต์ป้ายสถานะ
 
@@ -150,6 +151,21 @@ const ReviewList = () => {
             <option value="confirmed">ยืนยันแล้ว (Confirmed)</option>
             <option value="draft">ฉบับร่าง (Draft)</option>
           </select>
+
+          {/* ปุ่มส่งออกรายการเป็น PDF */}
+          <button
+            onClick={() => {
+              const prev = document.title;
+              document.title = 'รายงานรายการผลการตรวจประเมิน_AUN-QA_2567';
+              window.print();
+              setTimeout(() => { document.title = prev; }, 1000);
+            }}
+            className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-xs flex items-center gap-1.5 transition hover:scale-102"
+            title="ส่งออกรายการตรวจสอบเป็นไฟล์ PDF"
+          >
+            <FileDown className="w-4 h-4 stroke-[2.5]" />
+            <span>ส่งออกเป็น PDF</span>
+          </button>
         </div>
       </div>
 
