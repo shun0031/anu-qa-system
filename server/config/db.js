@@ -16,26 +16,30 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   // อ่าน URI จาก .env หรือใช้ default localhost:27017
   const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/aun_qa_db';
+  const isAtlas = uri.includes('mongodb+srv') || uri.includes('mongodb.net');
+  // หากเป็น MongoDB Atlas ให้เวลารอเชื่อมต่อ 15 วินาที (หากเป็น localhost ให้รอ 2.5 วินาที)
+  const timeoutMs = isAtlas ? 15000 : 2500;
 
   try {
-    // 1. พยายามเชื่อมต่อไปยัง MongoDB เครื่องจริง
+    // 1. พยายามเชื่อมต่อไปยัง MongoDB เครื่องจริง หรือ MongoDB Atlas
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 2500 // หน่วงเวลารอ 2.5 วินาทีหากเชื่อมต่อไม่ได้
+      serverSelectionTimeoutMS: timeoutMs
     });
-    console.log(`Connected to MongoDB at ${uri}`);
+    console.log(`✅ [Database] Connected successfully to ${isAtlas ? 'MongoDB Atlas (Cloud Cluster)' : uri}`);
     return true;
   } catch (err) {
-    // 2. กรณีเชื่อมต่อไม่สำเร็จ -> ใช้ In-Memory MongoDB Fallback
-    console.warn(`Local/Remote MongoDB not available (${err.message}). Initializing MongoMemoryServer fallback...`);
+    // 2. กรณีเชื่อมต่อไม่สำเร็จ -> ใช้ In-Memory MongoDB Fallback พร้อมแจ้งเตือนชัดเจน
+    console.warn(`⚠️ [Database Warning] Failed to connect to ${isAtlas ? 'MongoDB Atlas' : uri} (${err.message})`);
+    console.warn(`⚠️ Fallback: Initializing MongoMemoryServer in RAM...`);
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');
       const mongod = await MongoMemoryServer.create();
       const memoryUri = mongod.getUri();
       await mongoose.connect(memoryUri);
-      console.log(`Connected to In-Memory MongoDB at ${memoryUri}`);
+      console.log(`ℹ️ [Database] Connected to In-Memory MongoDB at ${memoryUri}`);
       return true;
     } catch (memErr) {
-      console.error('Failed to start MongoMemoryServer fallback:', memErr);
+      console.error('❌ Failed to start MongoMemoryServer fallback:', memErr);
       throw memErr;
     }
   }
