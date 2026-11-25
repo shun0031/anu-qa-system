@@ -13,6 +13,7 @@ const User = require('../models/User');
 const Role = require('../models/Role');
 const Department = require('../models/Department');
 const { logAction } = require('../middleware/logger');
+const { triggerDbSave } = require('../utils/dbStorage');
 
 // 1. ดึงรายชื่อผู้ใช้งานทั้งหมด พร้อมค้นหาและกรองตามบทบาท/สถานะ
 const getUsers = async (req, res) => {
@@ -100,6 +101,7 @@ const createUser = async (req, res) => {
       .populate('department_id')
       .select('-password_hash');
 
+    triggerDbSave();
     res.status(201).json({ message: 'สร้างผู้ใช้งานสำเร็จ', user: populatedUser });
   } catch (error) {
     res.status(500).json({ message: 'ไม่สามารถสร้างผู้ใช้งานได้', error: error.message });
@@ -144,6 +146,7 @@ const updateUser = async (req, res) => {
       .populate('department_id')
       .select('-password_hash');
 
+    triggerDbSave();
     res.json({ message: 'อัปเดตข้อมูลผู้ใช้งานสำเร็จ', user: updated });
   } catch (error) {
     res.status(500).json({ message: 'ไม่สามารถอัปเดตข้อมูลผู้ใช้งานได้', error: error.message });
@@ -171,6 +174,7 @@ const resetPassword = async (req, res) => {
 
     await logAction(req.user._id, 'RESET_PASSWORD', 'users', user._id, `รีเซ็ตรหัสผ่านสำหรับ ${user.username}`, req);
 
+    triggerDbSave();
     res.json({ message: `รีเซ็ตรหัสผ่านของ ${user.username} สำเร็จเรียบร้อยแล้ว` });
   } catch (error) {
     res.status(500).json({ message: 'ไม่สามารถรีเซ็ตรหัสผ่านได้', error: error.message });
@@ -192,6 +196,7 @@ const deleteUser = async (req, res) => {
     }
 
     await logAction(req.user._id, 'DELETE_USER', 'users', id, `ลบผู้ใช้งาน: ${user.username}`, req);
+    triggerDbSave();
     res.json({ message: 'ลบผู้ใช้งานสำเร็จ' });
   } catch (error) {
     res.status(500).json({ message: 'ไม่สามารถลบผู้ใช้งานได้', error: error.message });

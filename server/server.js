@@ -20,6 +20,7 @@ require('dotenv').config();
 // นำเข้าโมดูลเชื่อมต่อฐานข้อมูลและการ Seed ข้อมูล
 const connectDB = require('./config/db');
 const seedInitialData = require('./config/seedData');
+const { saveDbToFile } = require('./utils/dbStorage');
 
 // นำเข้า Routing แต่ละโมดูลตามฟังก์ชันระบบ
 const authRoutes = require('./routes/authRoutes');       // ระบบเข้าสู่ระบบ ยืนยันตัวตน และข้อมูลโปรไฟล์
@@ -97,6 +98,21 @@ const startServer = async () => {
       console.log(`🚀 AUN-QA Server running on port ${PORT}`);
       console.log(`🔗 API Base: http://localhost:${PORT}/api`);
       console.log(`====================================================`);
+    });
+
+    // สำรองข้อมูลลงฮาร์ดดิสก์สม่ำเสมอทุก 60 วินาที เพื่อป้องกันข้อมูลหายเมื่อรันแบบ In-Memory
+    setInterval(() => {
+      saveDbToFile().catch(() => {});
+    }, 60000);
+
+    // บันทึกลงดิสก์ทันทีก่อนปิดเซิร์ฟเวอร์
+    process.on('SIGINT', async () => {
+      await saveDbToFile();
+      process.exit(0);
+    });
+    process.on('SIGTERM', async () => {
+      await saveDbToFile();
+      process.exit(0);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

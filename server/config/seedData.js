@@ -24,9 +24,20 @@ const Role = require('../models/Role');
 const User = require('../models/User');
 const Criteria = require('../models/Criteria');
 const AunqaRecord = require('../models/AunqaRecord');
+const { restoreDbFromFile, saveDbToFile } = require('../utils/dbStorage');
 
 const seedInitialData = async () => {
   try {
+    // 1. ตรวจสอบว่ามีไฟล์สำรองบนฮาร์ดดิสก์เพื่อกู้คืนหรือไม่ (สำหรับป้องกันข้อมูลหายเมื่อรันแบบ In-Memory)
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      const restored = await restoreDbFromFile();
+      if (restored) {
+        console.log('Database restored from disk backup successfully.');
+        return;
+      }
+    }
+
     // ซิงค์บทบาท role_ids ให้กับผู้ใช้งานเดิมที่ยังไม่มี role_ids (Auto-Migration สำหรับ 1 บัญชีหลายสิทธิ์)
     const usersNeedingSync = await User.find({
       $or: [
@@ -43,8 +54,8 @@ const seedInitialData = async () => {
     }
 
     // ตรวจสอบว่าในฐานข้อมูลมีข้อมูลผู้ใช้อยู่แล้วหรือไม่ หากมีแล้วให้ข้ามการสร้างซ้ำ
-    const userCount = await User.countDocuments();
-    if (userCount > 0) {
+    const currentUsers = await User.countDocuments();
+    if (currentUsers > 0) {
       console.log('Database already has data. Initial seeding skipped & roles auto-synced.');
       return;
     }
@@ -414,6 +425,9 @@ const seedInitialData = async () => {
     console.log(' - Admin: admin / admin123');
     console.log(' - Lecturer: lecturer / lecturer123');
     console.log(' - Reviewer: reviewer / reviewer123');
+
+    // บันทึกสถานะเริ่มต้นลงไฟล์ฮาร์ดดิสก์
+    await saveDbToFile();
   } catch (err) {
     console.error('Error during data seeding:', err);
   }

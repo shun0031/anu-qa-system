@@ -35,6 +35,7 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [msg, setMsg] = useState({ type: '', text: '' });
+  const [modalError, setModalError] = useState('');
 
   // State จัดการ Modal เพิ่ม/แก้ไขผู้ใช้ และ Modal รีเซ็ตรหัสผ่าน
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -112,6 +113,7 @@ const UserManagement = () => {
   // เปิด Modal เพิ่มผู้ใช้ใหม่
   const handleOpenCreate = () => {
     setSelectedUser(null);
+    setModalError('');
     setForm({
       username: '',
       password: '',
@@ -131,6 +133,7 @@ const UserManagement = () => {
   // เปิด Modal แก้ไขข้อมูลผู้ใช้ที่มีอยู่แล้ว (ดึงสิทธิ์ทั้งหมดที่มี)
   const handleOpenEdit = (user) => {
     setSelectedUser(user);
+    setModalError('');
 
     let userRoleIds = [];
     if (user.role_ids && Array.isArray(user.role_ids)) {
@@ -170,6 +173,7 @@ const UserManagement = () => {
   // ส่งข้อมูลฟอร์มเพิ่มหรือแก้ไขผู้ใช้ไปยัง API
   const handleSubmitUser = async (e) => {
     e.preventDefault();
+    setModalError('');
     setMsg({ type: '', text: '' });
     try {
       if (selectedUser) {
@@ -178,11 +182,14 @@ const UserManagement = () => {
       } else {
         await api.post('/users', form);
         setMsg({ type: 'success', text: 'เพิ่มผู้ใช้งานใหม่สำเร็จ' });
+        setSearch(''); // ล้างช่องค้นหาเพื่อให้ผู้ใช้ใหม่แสดงในตารางทันที
       }
       setIsModalOpen(false);
       fetchUsersAndMeta();
     } catch (err) {
-      setMsg({ type: 'error', text: err.response?.data?.message || 'บันทึกข้อมูลไม่สำเร็จ' });
+      const errText = err.response?.data?.message || 'บันทึกข้อมูลไม่สำเร็จ';
+      setModalError(errText);
+      setMsg({ type: 'error', text: errText });
     }
   };
 
@@ -212,11 +219,11 @@ const UserManagement = () => {
     }
   };
 
-  // กรองรายชื่อผู้ใช้ตามคำค้นหา
+  // กรองรายชื่อผู้ใช้ตามคำค้นหา (แบบปลอดภัย ป้องกัน null/undefined)
   const filteredUsers = users.filter(u =>
-    u.full_name.toLowerCase().includes(search.toLowerCase()) ||
-    u.username.toLowerCase().includes(search.toLowerCase()) ||
-    u.email.toLowerCase().includes(search.toLowerCase())
+    (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
+    (u.username || '').toLowerCase().includes(search.toLowerCase()) ||
+    (u.email || '').toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -517,6 +524,13 @@ const UserManagement = () => {
                   <option value="inactive">ปิดใช้งาน (Inactive)</option>
                 </select>
               </div>
+
+              {modalError && (
+                <div className="p-3 bg-rose-100 border border-rose-400 text-rose-900 rounded-xl text-xs font-bold flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-700 flex-shrink-0" />
+                  <span>{modalError}</span>
+                </div>
+              )}
 
               <div className="flex justify-end gap-2 pt-3 border-t-2 border-slate-200">
                 <button
