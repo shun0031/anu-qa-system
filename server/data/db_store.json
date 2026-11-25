@@ -1,0 +1,603 @@
+{
+  "savedAt": "2026-11-25T06:00:25.839Z",
+  "departments": [
+    {
+      "_id": "6b0679784204aee18c6acfda",
+      "department_name": "สาขาเทคโนโลยีคอมพิวเตอร์",
+      "createdAt": "2026-11-25T06:00:24.495Z",
+      "updatedAt": "2026-11-25T06:00:24.495Z",
+      "__v": 0
+    }
+  ],
+  "courses": [
+    {
+      "_id": "6b0679784204aee18c6acfdc",
+      "course_name": "วิทยาศาสตรบัณฑิต สาขาวิชาเทคโนโลยีคอมพิวเตอร์และดิจิทัล",
+      "department_id": "6b0679784204aee18c6acfda",
+      "status": "active",
+      "createdAt": "2026-11-25T06:00:24.554Z",
+      "updatedAt": "2026-11-25T06:00:24.554Z",
+      "__v": 0
+    }
+  ],
+  "permissions": [
+    {
+      "_id": "6b0679784204aee18c6acfde",
+      "permission_name": "view_dashboard",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfdf",
+      "permission_name": "edit_profile",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe0",
+      "permission_name": "manage_users",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe1",
+      "permission_name": "manage_roles",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe2",
+      "permission_name": "manage_courses",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe3",
+      "permission_name": "manage_criteria",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe4",
+      "permission_name": "manage_files",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe5",
+      "permission_name": "view_system_logs",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe6",
+      "permission_name": "submit_aunqa_record",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe7",
+      "permission_name": "review_aunqa_record",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe8",
+      "permission_name": "confirm_aunqa_record",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.599Z",
+      "updatedAt": "2026-11-25T06:00:24.599Z"
+    },
+    {
+      "_id": "6b0679784204aee18c6acfe9",
+      "permission_name": "track_aunqa_progress",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:24.600Z",
+      "updatedAt": "2026-11-25T06:00:24.600Z"
+    }
+  ],
+  "roles": [
+    {
+      "_id": "6b0679784204aee18c6acfeb",
+      "role_name": "ผู้ดูแลระบบ",
+      "permission_ids": [
+        "6b0679784204aee18c6acfde",
+        "6b0679784204aee18c6acfdf",
+        "6b0679784204aee18c6acfe0",
+        "6b0679784204aee18c6acfe1",
+        "6b0679784204aee18c6acfe2",
+        "6b0679784204aee18c6acfe3",
+        "6b0679784204aee18c6acfe4",
+        "6b0679784204aee18c6acfe5",
+        "6b0679784204aee18c6acfe6",
+        "6b0679784204aee18c6acfe7",
+        "6b0679784204aee18c6acfe8",
+        "6b0679784204aee18c6acfe9"
+      ],
+      "createdAt": "2026-11-25T06:00:24.658Z",
+      "updatedAt": "2026-11-25T06:00:24.658Z",
+      "__v": 0
+    },
+    {
+      "_id": "6b0679784204aee18c6acfed",
+      "role_name": "อาจารย์ในสาขาเทคโนโลยีคอมพิวเตอร์",
+      "permission_ids": [
+        "6b0679784204aee18c6acfde",
+        "6b0679784204aee18c6acfdf",
+        "6b0679784204aee18c6acfe6"
+      ],
+      "createdAt": "2026-11-25T06:00:24.704Z",
+      "updatedAt": "2026-11-25T06:00:24.704Z",
+      "__v": 0
+    },
+    {
+      "_id": "6b0679784204aee18c6acfef",
+      "role_name": "ผู้รับผิดชอบ AUN-QA",
+      "permission_ids": [
+        "6b0679784204aee18c6acfde",
+        "6b0679784204aee18c6acfdf",
+        "6b0679784204aee18c6acfe7",
+        "6b0679784204aee18c6acfe8",
+        "6b0679784204aee18c6acfe9"
+      ],
+      "createdAt": "2026-11-25T06:00:24.751Z",
+      "updatedAt": "2026-11-25T06:00:24.751Z",
+      "__v": 0
+    }
+  ],
+  "users": [
+    {
+      "_id": "6b0679794204aee18c6acff1",
+      "username": "admin",
+      "password_hash": "$2a$10$gh3mjPfrtarAJRX3PSIjQ.b.DU86lZq4WZG.qeWr.AUFnXQK4u/4W",
+      "full_name": "ผู้ดูแลระบบสูงสุด",
+      "address": "",
+      "phone": "081-111-2222",
+      "email": "admin@university.ac.th",
+      "line_id": "admin_aunqa",
+      "role_ids": [
+        "6b0679784204aee18c6acfeb"
+      ],
+      "role_id": "6b0679784204aee18c6acfeb",
+      "department_id": "6b0679784204aee18c6acfda",
+      "status": "active",
+      "last_login": null,
+      "created_date": "2026-11-25T06:00:25.019Z",
+      "updated_date": "2026-11-25T06:00:25.019Z",
+      "__v": 0
+    },
+    {
+      "_id": "6b0679794204aee18c6acff3",
+      "username": "lecturer",
+      "password_hash": "$2a$10$gh3mjPfrtarAJRX3PSIjQ.QhPuTphiRhIk6vaTae2VGOj5yqu./ce",
+      "full_name": "อาจารย์ ดร.สมชาย ใจดี",
+      "address": "",
+      "phone": "089-333-4444",
+      "email": "somchai.j@university.ac.th",
+      "line_id": "somchai_tech",
+      "role_ids": [
+        "6b0679784204aee18c6acfed"
+      ],
+      "role_id": "6b0679784204aee18c6acfed",
+      "department_id": "6b0679784204aee18c6acfda",
+      "status": "active",
+      "last_login": null,
+      "created_date": "2026-11-25T06:00:25.066Z",
+      "updated_date": "2026-11-25T06:00:25.066Z",
+      "__v": 0
+    },
+    {
+      "_id": "6b0679794204aee18c6acff5",
+      "username": "reviewer",
+      "password_hash": "$2a$10$gh3mjPfrtarAJRX3PSIjQ.i1udselY2GDUDDpjynhlEc5aTff8SMy",
+      "full_name": "ผศ.ดร.วิภาดา วิชาการ",
+      "address": "",
+      "phone": "086-555-6666",
+      "email": "wipada.w@university.ac.th",
+      "line_id": "wipada_qa",
+      "role_ids": [
+        "6b0679784204aee18c6acfef"
+      ],
+      "role_id": "6b0679784204aee18c6acfef",
+      "department_id": "6b0679784204aee18c6acfda",
+      "status": "active",
+      "last_login": null,
+      "created_date": "2026-11-25T06:00:25.112Z",
+      "updated_date": "2026-11-25T06:00:25.112Z",
+      "__v": 0
+    }
+  ],
+  "criteria": [
+    {
+      "_id": "6b0679794204aee18c6acff7",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "1.1",
+      "criteria_name": "ผลการเรียนรู้ที่คาดหวังของหลักสูตร (ELOs) มีความชัดเจน สอดคล้องกับวิสัยทัศน์ พันธกิจ",
+      "description": "วัตถุประสงค์ของหลักสูตรและผลการเรียนรู้ที่คาดหวังได้รับการกำหนดอย่างชัดเจนและสอดคล้องกับวิสัยทัศน์ พันธกิจ และเป้าหมายเชิงยุทธศาสตร์ของมหาวิทยาลัย",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.163Z",
+      "updatedAt": "2026-11-25T06:00:25.163Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acff8",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "1.2",
+      "criteria_name": "ELOs ครอบคลุมทั้ง Generic Skills และ Subject-specific Skills",
+      "description": "ผลการเรียนรู้ที่คาดหวังของหลักสูตรครอบคลุมทั้งทักษะทั่วไป (ความรอบรู้ ทักษะทางปัญญา ทักษะดิจิทัล) และทักษะเฉพาะทางวิชาชีพด้านคอมพิวเตอร์",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.163Z",
+      "updatedAt": "2026-11-25T06:00:25.163Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acff9",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "1.3",
+      "criteria_name": "การสื่อสารและเผยแพร่ ELOs สู่ผู้มีส่วนได้ส่วนเสีย",
+      "description": "ผลการเรียนรู้ที่คาดหวังของหลักสูตรได้รับการสื่อสาร ถ่ายทอด และรับรู้โดยนักศึกษา คณาจารย์ บุคลากร และผู้มีส่วนได้ส่วนเสียภายนอก",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.163Z",
+      "updatedAt": "2026-11-25T06:00:25.163Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acffa",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "2.1",
+      "criteria_name": "โครงสร้างหลักสูตรและแผนการศึกษามีความทันสมัย",
+      "description": "โครงสร้างหลักสูตรมีการออกแบบให้เนื้อหาวิชาการมีความทันสมัย มีลำดับการเรียนรู้ตามแผนการศึกษา และส่งเสริมการบรรลุ ELOs",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.163Z",
+      "updatedAt": "2026-11-25T06:00:25.163Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acffb",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "2.2",
+      "criteria_name": "การบูรณาการหลักสูตรกับความต้องการของตลาดแรงงานดิจิทัล",
+      "description": "หลักสูตรมีการบูรณาการความรู้เทคโนโลยีคอมพิวเตอร์ที่ตอบสนองความต้องการของภาคอุตสาหกรรมและมาตรฐานวิชาชีพ",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.163Z",
+      "updatedAt": "2026-11-25T06:00:25.163Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acffc",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "3.1",
+      "criteria_name": "ปรัชญาการจัดการเรียนการสอนแบบเน้นผู้เรียนเป็นสำคัญ (Student-Centered Learning)",
+      "description": "หลักสูตรนำรูปแบบการสอน Active Learning, Problem-based Learning, และ Project-based Learning มาใช้อย่างเหมาะสม",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acffd",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "3.2",
+      "criteria_name": "การส่งเสริมทักษะการเรียนรู้ตลอดชีวิตและการคิดเชิงนวัตกรรม",
+      "description": "กิจกรรมการเรียนรู้ส่งเสริมให้นักศึกษาค้นคว้าด้วยตนเอง มีทักษะการแก้ปัญหา และพัฒนาโครงงานนวัตกรรม",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acffe",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "4.1",
+      "criteria_name": "ระบบและเกณฑ์การประเมินผลผู้เรียนมีความสอดคล้องกับ ELOs",
+      "description": "การวัดและประเมินผลผู้เรียนในแต่ละรายวิชาใช้เกณฑ์ Rubrics ที่ชัดเจน และสามารถสะท้อนผลสัมฤทธิ์ของ ELOs ได้",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6acfff",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "4.2",
+      "criteria_name": "การให้ข้อมูลย้อนกลับ (Constructive Feedback) แก่นักศึกษาอย่างทันเวลา",
+      "description": "อาจารย์ผู้สอนมีกระบวนการให้ข้อเสนอแนะและสะท้อนผลการประเมินเพื่อการพัฒนาแก่นักศึกษาอย่างสม่ำเสมอ",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad000",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "5.1",
+      "criteria_name": "การวางแผนและการบริหารจัดการอาจารย์ผู้สอน",
+      "description": "อัตราส่วนอาจารย์ต่อนักศึกษา ความเชี่ยวชาญ และภาระงานมีความเหมาะสมต่อการจัดการเรียนการสอน",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad001",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "5.2",
+      "criteria_name": "การส่งเสริมและพัฒนาศักยภาพอาจารย์ (Faculty Development)",
+      "description": "อาจารย์ได้รับการส่งเสริมให้เข้าอบรมทางวิชาการ การพัฒนาทักษะด้านเทคโนโลยี และการขอตำแหน่งทางวิชาการ",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad002",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "6.1",
+      "criteria_name": "ระบบการให้คำปรึกษาทางวิชาการและแนะแนวการทำงาน",
+      "description": "มีระบบอาจารย์ที่ปรึกษา การจัดกิจกรรมติว การเตรียมความพร้อมทางวิชาการ และการฝึกงาน/สหกิจศึกษา",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad003",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "6.2",
+      "criteria_name": "การดูแลสวัสดิการ สุขภาวะ และกิจกรรมพัฒนานักศึกษา",
+      "description": "บริการด้านทุนการศึกษา สุขอนามัย การให้คำปรึกษาด้านสุขภาพจิต และกิจกรรมเสริมทักษะนอกห้องเรียน",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad004",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "7.1",
+      "criteria_name": "สิ่งอำนวยความสะดวก ห้องปฏิบัติการ และระบบคอมพิวเตอร์",
+      "description": "มีห้องปฏิบัติการคอมพิวเตอร์ อุปกรณ์ฮาร์ดแวร์ ซอฟต์แวร์ลิขสิทธิ์ และระบบเครือข่ายอินเทอร์เน็ตความเร็วสูงที่พร้อมใช้งาน",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad005",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "7.2",
+      "criteria_name": "แหล่งทรัพยากรการเรียนรู้และห้องสมุดดิจิทัล",
+      "description": "การเข้าถึงฐานข้อมูลงานวิจัย หนังสืออิเล็กทรอนิกส์ (e-Books) และเครื่องมือดิจิทัลสำหรับการเรียนการสอน",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad006",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "8.1",
+      "criteria_name": "อัตราการคงอยู่และการสำเร็จการศึกษาตามระยะเวลา",
+      "description": "การติดตามและวิเคราะห์ข้อมูลอัตราการคงอยู่ของนักศึกษา อัตราการตกออก และอัตราการสำเร็จการศึกษา",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    },
+    {
+      "_id": "6b0679794204aee18c6ad007",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "criteria_no": "8.2",
+      "criteria_name": "อัตราการได้งานทำและความพึงพอใจของผู้ใช้บัณฑิต",
+      "description": "การสำรวจภาวะการมีงานทำ เงินเดือนเฉลี่ยเริ่มต้น และการประเมินความพึงพอใจของนายจ้างต่อสมรรถนะของบัณฑิต",
+      "__v": 0,
+      "createdAt": "2026-11-25T06:00:25.164Z",
+      "updatedAt": "2026-11-25T06:00:25.164Z"
+    }
+  ],
+  "records": [
+    {
+      "_id": "6b0679794204aee18c6ad009",
+      "criteria_id": "6b0679794204aee18c6acff7",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "description": "หลักสูตรได้ดำเนินการทบทวน ELOs ร่วมกับคณะกรรมการบริหารหลักสูตรและผู้ทรงคุณวุฒิภายนอก เมื่อวันที่ 15 พฤษภาคม 2567 โดยสอดคล้องกับแผนยุทธศาสตร์คณะวิทยาศาสตร์และเทคโนโลยี และได้เผยแพร่ผ่านเว็บไซต์หลักสูตรและคู่มือนักศึกษาใหม่",
+      "status": "confirmed",
+      "created_by": {
+        "user_id": "6b0679794204aee18c6acff3",
+        "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+      },
+      "review_comment": "ข้อมูลการทบทวน ELOs และหลักฐานรายงานการประชุมครบถ้วน ชัดเจน ตรงตามเกณฑ์ AUN-QA 1.1 ยืนยันผลการประเมิน",
+      "reviewed_by": {
+        "user_id": "6b0679794204aee18c6acff5",
+        "full_name": "ผศ.ดร.วิภาดา วิชาการ"
+      },
+      "reviewed_date": "2026-11-23T06:00:25.216Z",
+      "review_history": [
+        {
+          "action": "submitted",
+          "comment": "ส่งรายงานผลการดำเนินงานข้อ 1.1 พร้อมแนบรายงานการประชุมและรูปภาพการสัมมนา",
+          "reviewed_by": {
+            "user_id": "6b0679794204aee18c6acff3",
+            "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+          },
+          "reviewed_date": "2026-11-21T06:00:25.216Z"
+        },
+        {
+          "action": "confirmed",
+          "comment": "หลักฐานสมบูรณ์ ครบถ้วนตามเกณฑ์",
+          "reviewed_by": {
+            "user_id": "6b0679794204aee18c6acff5",
+            "full_name": "ผศ.ดร.วิภาดา วิชาการ"
+          },
+          "reviewed_date": "2026-11-23T06:00:25.216Z"
+        }
+      ],
+      "confirmed_by": {
+        "user_id": "6b0679794204aee18c6acff5",
+        "full_name": "ผศ.ดร.วิภาดา วิชาการ"
+      },
+      "confirmed_date": "2026-11-23T06:00:25.216Z",
+      "evidences": [
+        {
+          "evidence_id": "ev-101",
+          "evidence_type": "text",
+          "file_id": null,
+          "text": "มติที่ประชุมกรรมการหลักสูตร ครั้งที่ 2/2567 เรื่อง การกำหนดรายละเอียดผลลัพธ์การเรียนรู้ระดับหลักสูตร (PLOs/ELOs)",
+          "url": "",
+          "uploaded_by": {
+            "user_id": "6b0679794204aee18c6acff3",
+            "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+          },
+          "uploaded_date": "2026-11-25T06:00:25.216Z"
+        },
+        {
+          "evidence_id": "ev-102",
+          "evidence_type": "link",
+          "file_id": null,
+          "text": "หน้าเว็บเผยแพร่ ELOs สู่สาธารณะและนักศึกษา",
+          "url": "https://computerscience.university.ac.th/curriculum/elo-v4",
+          "uploaded_by": {
+            "user_id": "6b0679794204aee18c6acff3",
+            "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+          },
+          "uploaded_date": "2026-11-25T06:00:25.216Z"
+        }
+      ],
+      "created_date": "2026-11-25T06:00:25.223Z",
+      "updated_date": "2026-11-25T06:00:25.223Z",
+      "__v": 0
+    },
+    {
+      "_id": "6b0679794204aee18c6ad00b",
+      "criteria_id": "6b0679794204aee18c6acffa",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "description": "หลักสูตรได้ปรับปรุงเนื้อหารายวิชาหมวดเทคโนโลยี AI, Cloud Computing, และ Web Architecture ให้ทันสมัย มีแผนการศึกษา 4 ปีที่ระบุวิชาบังคับก่อนชัดเจน เพื่อให้นักศึกษาสามารถเรียนรู้ตามลำดับขั้นได้มีประสิทธิภาพ",
+      "status": "submitted",
+      "created_by": {
+        "user_id": "6b0679794204aee18c6acff3",
+        "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+      },
+      "review_comment": "",
+      "reviewed_date": null,
+      "review_history": [
+        {
+          "action": "submitted",
+          "comment": "ส่งรายงานข้อ 2.1 พร้อมแผนการศึกษา มคอ.2 รอคณะกรรมการตรวจสอบ",
+          "reviewed_by": {
+            "user_id": "6b0679794204aee18c6acff3",
+            "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+          },
+          "reviewed_date": "2026-11-24T06:00:25.269Z"
+        }
+      ],
+      "confirmed_date": null,
+      "evidences": [
+        {
+          "evidence_id": "ev-201",
+          "evidence_type": "text",
+          "file_id": null,
+          "text": "ตารางวิเคราะห์ความสอดคล้องระหว่างรายวิชาในหลักสูตร (Curriculum Mapping) กับ ELOs 1-5",
+          "url": "",
+          "uploaded_by": {
+            "user_id": "6b0679794204aee18c6acff3",
+            "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+          },
+          "uploaded_date": "2026-11-25T06:00:25.269Z"
+        }
+      ],
+      "created_date": "2026-11-25T06:00:25.270Z",
+      "updated_date": "2026-11-25T06:00:25.270Z",
+      "__v": 0
+    },
+    {
+      "_id": "6b0679794204aee18c6ad00d",
+      "criteria_id": "6b0679794204aee18c6acffc",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "description": "มีการใช้การจัดการเรียนการสอนแบบ Active Learning ในรายวิชาการพัฒนาเว็บแอปพลิเคชันและวิศวกรรมซอฟต์แวร์ โดยมอบหมายโปรเจกต์จริงให้แก่นักศึกษา",
+      "status": "returned",
+      "created_by": {
+        "user_id": "6b0679794204aee18c6acff3",
+        "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+      },
+      "review_comment": "ขอให้แนบหลักฐานภาพถ่ายการจัดกิจกรรมการเรียนรู้ หรือไฟล์ มคอ.3 ที่ระบุกิจกรรม Project-based Learning เพิ่มเติม เพื่อความชัดเจนในการประเมิน",
+      "reviewed_by": {
+        "user_id": "6b0679794204aee18c6acff5",
+        "full_name": "ผศ.ดร.วิภาดา วิชาการ"
+      },
+      "reviewed_date": "2026-11-24T18:00:25.315Z",
+      "review_history": [
+        {
+          "action": "submitted",
+          "comment": "ส่งรายงานข้อ 3.1",
+          "reviewed_by": {
+            "user_id": "6b0679794204aee18c6acff3",
+            "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+          },
+          "reviewed_date": "2026-11-24T06:00:25.315Z"
+        },
+        {
+          "action": "returned",
+          "comment": "ขอให้แนบหลักฐานภาพถ่ายการจัดกิจกรรมการเรียนรู้ หรือไฟล์ มคอ.3 ที่ระบุกิจกรรม Project-based Learning เพิ่มเติม เพื่อความชัดเจนในการประเมิน",
+          "reviewed_by": {
+            "user_id": "6b0679794204aee18c6acff5",
+            "full_name": "ผศ.ดร.วิภาดา วิชาการ"
+          },
+          "reviewed_date": "2026-11-24T18:00:25.315Z"
+        }
+      ],
+      "confirmed_date": null,
+      "evidences": [
+        {
+          "evidence_id": "ev-301",
+          "evidence_type": "text",
+          "file_id": null,
+          "text": "รายชื่อ 5 รายวิชาที่ใช้ Active Learning ประจำภาคการศึกษาที่ 1/2567",
+          "url": "",
+          "uploaded_by": {
+            "user_id": "6b0679794204aee18c6acff3",
+            "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+          },
+          "uploaded_date": "2026-11-25T06:00:25.315Z"
+        }
+      ],
+      "created_date": "2026-11-25T06:00:25.319Z",
+      "updated_date": "2026-11-25T06:00:25.319Z",
+      "__v": 0
+    },
+    {
+      "_id": "6b0679794204aee18c6ad00f",
+      "criteria_id": "6b0679794204aee18c6acffe",
+      "course_id": "6b0679784204aee18c6acfdc",
+      "academic_year": "2567",
+      "description": "อยู่ระหว่างรวบรวมเกณฑ์การประเมิน (Rubrics) ของรายวิชาโครงงานคอมพิวเตอร์",
+      "status": "draft",
+      "created_by": {
+        "user_id": "6b0679794204aee18c6acff3",
+        "full_name": "อาจารย์ ดร.สมชาย ใจดี"
+      },
+      "review_comment": "",
+      "reviewed_date": null,
+      "confirmed_date": null,
+      "evidences": [],
+      "review_history": [],
+      "created_date": "2026-11-25T06:00:25.368Z",
+      "updated_date": "2026-11-25T06:00:25.368Z",
+      "__v": 0
+    }
+  ],
+  "logs": []
+}
